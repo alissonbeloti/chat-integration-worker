@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-integration-worker
+  namespace: chat-integration
+  labels:
+    app: chat-integration-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chat-integration-worker
+  template:
+    metadata:
+      labels:
+        app: chat-integration-worker
+    spec:
+      containers:
+      - name: chat-integration-worker
+        image: seu-registry.azurecr.io/chat-integration-worker:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        envFrom:
+        - configMapRef:
+            name: chat-integration-config
+        - secretRef:
+            name: chat-integration-secrets
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10 

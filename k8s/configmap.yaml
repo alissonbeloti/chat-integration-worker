@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-integration-config
+  namespace: chat-integration
+data:
+  ResilienceSettings__CircuitBreaker__ExceptionsAllowedBeforeBreaking: "3"
+  ResilienceSettings__CircuitBreaker__DurationOfBreakInSeconds: "45"
+  ResilienceSettings__Retry__MaxRetryAttempts: "5"
+  ResilienceSettings__Retry__BaseDelayMilliseconds: "2000" 

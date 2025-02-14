@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  chat-integration-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ResilienceSettings__CircuitBreaker__ExceptionsAllowedBeforeBreaking=3
+      - ResilienceSettings__CircuitBreaker__DurationOfBreakInSeconds=45
+      - ResilienceSettings__Retry__MaxRetryAttempts=5
+      - ResilienceSettings__Retry__BaseDelayMilliseconds=2000
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    networks:
+      - chat-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  chat-network:
+    driver: bridge 
