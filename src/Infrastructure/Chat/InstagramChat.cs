@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SocialChatIntegration.Core.Domain.Entities;
-using SocialChatIntegration.Core.Domain.Interfaces;
-using SocialChatIntegration.Infrastructure.Interfaces;
+using Core.Domain.Entities;
+using Core.Domain.Enum;
+using Core.Domain.Interfaces;
+
+using Infrastructure.Factories;
+
 using Microsoft.Extensions.Logging;
-using Polly;
-using Polly.CircuitBreaker;
-using Core.Domain.Settings;
+
 
 public class InstagramChat : IChat
 {
@@ -41,7 +38,7 @@ public class InstagramChat : IChat
 
     public async Task<IEnumerable<Message>> GetMessages(string conversationId)
     {
-        var retryPolicyForMessages = _policies.CreateDefaultRetryPolicy<IEnumerable<InstagramDirectMessage>>(_logger);
+        var retryPolicyForMessages = _policies.CreateDefaultRetryPolicy<IEnumerable<InstagramDirectMessage>>();
         
         var messages = await _policies.CreateCircuitBreakerPolicy<IEnumerable<InstagramDirectMessage>>()
             .ExecuteAsync(async () => await retryPolicyForMessages.ExecuteAsync(async () =>
@@ -49,11 +46,11 @@ public class InstagramChat : IChat
 
         return messages.Select(m => new Message
         {
-            Id = m.Id,
+            Id = Guid.Parse(m.Id),
             Content = m.Text,
-            SenderId = m.SenderId,
-            ReceiverId = m.ReceiverId,
-            Timestamp = m.CreatedAt,
+            From = m.SenderId,
+            To = m.ReceiverId,
+            CreatedAt = m.CreatedAt,
             Platform = MessagePlatform.Instagram
         });
     }

@@ -1,7 +1,5 @@
-using System;
-using System.Threading.Tasks;
-using Core.Domain.Entities;
 using Core.Application.Factories;
+using Core.Domain.Enum;
 
 public class SendMessageUseCase
 {

@@ -1,8 +1,9 @@
 using Xunit;
 using Moq;
-using Core.Domain.Interfaces;
 using Core.Application.Factories;
-using Core.Application.UseCases;
+using Core.Domain.Enum;
+using Core.Domain.Interfaces;
+
 
 public class SendMessageUseCaseTests
 {

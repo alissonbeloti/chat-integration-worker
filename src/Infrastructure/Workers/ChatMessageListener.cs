@@ -1,12 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Core.Domain.Interfaces;
 using Infrastructure.Factories;
 using Polly;
+using Microsoft.Extensions.Hosting;
+using Polly.Retry;
+using Core.Domain.Enum;
+using Core.Domain.Interfaces;
 
 namespace Infrastructure.Workers
 {
@@ -81,7 +80,7 @@ namespace Infrastructure.Workers
                 {
                     // Implementação específica para escutar mensagens do WhatsApp
                     // Isso dependerá da API/SDK que você está usando
-                    await _messageHandler.HandleNewMessage(/* nova mensagem */);
+                    await _messageHandler.HandleNewMessage(new Core.Domain.Entities.Message()); // nova mensagem refactoring
                 }
                 catch (Exception ex)
                 {
@@ -99,7 +98,7 @@ namespace Infrastructure.Workers
                 {
                     // Implementação específica para escutar mensagens do Instagram
                     // Isso dependerá da API/SDK que você está usando
-                    await _messageHandler.HandleNewMessage(/* nova mensagem */);
+                    await _messageHandler.HandleNewMessage(new Core.Domain.Entities.Message());
                 }
                 catch (Exception ex)
                 {

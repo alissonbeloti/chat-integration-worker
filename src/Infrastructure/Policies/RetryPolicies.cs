@@ -3,7 +3,6 @@ using Polly.Retry;
 using Polly.CircuitBreaker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Core.Domain.Settings;
 
 public class RetryPolicies
 {
@@ -12,7 +11,7 @@ public class RetryPolicies
 
     public RetryPolicies(ILogger logger, IOptions<ResilienceSettings> settings)
     {
-        _logger = logger;
+        _logger = logger ?? throw new Exception("Necessário criar um logger");
         _settings = settings.Value;
     }
 
@@ -27,11 +26,11 @@ public class RetryPolicies
                 (exception, timeSpan, retryCount, context) =>
                 {
                     _logger.LogWarning(
-                        exception,
+                        exception.Exception,
                         "Tentativa {RetryCount} falhou após {TimeSpan:g}. Erro: {Error}",
                         retryCount,
                         timeSpan,
-                        exception.Message);
+                        exception.Exception.Message);
                 }
             );
     }
@@ -46,7 +45,7 @@ public class RetryPolicies
                 (exception, duration) =>
                 {
                     _logger.LogError(
-                        exception,
+                        exception.Exception,
                         "Circuit breaker aberto por {DurationSeconds} segundos após {ExceptionsCount} exceções",
                         _settings.CircuitBreaker.DurationOfBreakInSeconds,
                         _settings.CircuitBreaker.ExceptionsAllowedBeforeBreaking);

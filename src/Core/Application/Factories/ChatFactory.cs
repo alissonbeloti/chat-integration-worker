@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SocialChatIntegration.Domain.Entities;
-using SocialChatIntegration.Domain.Interfaces;
-using SocialChatIntegration.Infrastructure.Chat;
+using Core.Domain.Enum;
+using Core.Domain.Interfaces;
 
+namespace Core.Application.Factories;
 public class ChatFactory
 {
-    private readonly IWhatsAppClient _whatsAppClient;
-    private readonly IInstagramClient _instagramClient;
+    private readonly IChat _whatsAppClient;
+    private readonly IChat _instagramClient;
 
-    public ChatFactory(IWhatsAppClient whatsAppClient, IInstagramClient instagramClient)
+    public ChatFactory(IChat whatsAppClient, IChat instagramClient)
     {
         _whatsAppClient = whatsAppClient;
         _instagramClient = instagramClient;
@@ -20,9 +17,9 @@ public class ChatFactory
     {
         return platform switch
         {
-            MessagePlatform.WhatsApp => new WhatsAppChat(_whatsAppClient),
-            MessagePlatform.Instagram => new InstagramChat(_instagramClient),
+            MessagePlatform.WhatsApp => _whatsAppClient,
+            MessagePlatform.Instagram => _instagramClient,
             _ => throw new ArgumentException("Plataforma não suportada", nameof(platform))
         };
     }
-} 
+}

@@ -1,3 +1,5 @@
+using Core.Domain.Enum;
+using Core.Application.Factories;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 public class WorkerHealthCheck : IHealthCheck

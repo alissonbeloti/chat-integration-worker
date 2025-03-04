@@ -1,19 +1,17 @@
 using Xunit;
 using Moq;
-using Core.Infrastructure.Chat;
-using Core.Domain.Interfaces;
-
+using Infrastructure.Integration.Interfaces;
+using Infrastructure.Factories;
+using Microsoft.Extensions.Logging;
+using Core.Domain.Enum;
+using Infrastructure.Chat;
 public class ChatFactoryTests
 {
-    private readonly Mock<IWhatsAppClient> _whatsAppClientMock;
-    private readonly Mock<IInstagramClient> _instagramClientMock;
     private readonly ChatFactory _factory;
 
     public ChatFactoryTests()
     {
-        _whatsAppClientMock = new Mock<IWhatsAppClient>();
-        _instagramClientMock = new Mock<IInstagramClient>();
-        _factory = new ChatFactory(_whatsAppClientMock.Object, _instagramClientMock.Object);
+        _factory = new ChatFactory(Mock.Of<IServiceProvider>(), Mock.Of<ILogger<ChatFactory>>());
     }
 
     [Fact]

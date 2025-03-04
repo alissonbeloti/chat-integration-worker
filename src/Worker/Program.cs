@@ -1,7 +1,9 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Core.Domain.Settings;
+using Infrastructure.Workers;
+using Infrastructure.Integration.Interfaces;
+using Infrastructure.Factories;
+using ChatFactory = Core.Application.Factories.ChatFactory;
+using Core.Application.Handlers;
+using Infrastructure.Integration;
 
 public class Program
 {
@@ -20,7 +22,7 @@ public class Program
                 // Registra as dependências
                 services.AddSingleton<ChatFactory>();
                 services.AddSingleton<IWhatsAppClient, WhatsAppClient>();
-                services.AddSingleton<IInstagramClient, InstagramClient>();
+                services.AddSingleton<IInstagramClient, InstagramClent>();
                 services.AddScoped<IMessageHandler, MessageHandler>();
                 
                 // Adiciona logging

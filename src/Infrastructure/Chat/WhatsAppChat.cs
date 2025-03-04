@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SocialChatIntegration.Core.Domain.Entities;
-using SocialChatIntegration.Core.Domain.Interfaces;
-using SocialChatIntegration.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
-using Polly;
-using Polly.Retry;
-using Polly.CircuitBreaker;
-using Core.Domain.Settings;
+using Infrastructure.Integration.Interfaces;
+using Core.Domain.Entities;
+using Core.Domain.Enum;
+using Core.Domain.Interfaces;
 
+namespace Infrastructure.Chat;
 public class WhatsAppChat : IChat
 {
     private readonly IWhatsAppClient _client;
@@ -42,20 +36,20 @@ public class WhatsAppChat : IChat
 
     public async Task<IEnumerable<Message>> GetMessages(string conversationId)
     {
-        var retryPolicyForMessages = _policies.CreateDefaultRetryPolicy<IEnumerable<WhatsAppMessage>>(_logger);
-        
-        var messages = await _policies.CreateCircuitBreakerPolicy<bool>()
+        var retryPolicyForMessages = _policies.CreateDefaultRetryPolicy<IEnumerable<WhatsAppMessage>>();
+
+        var messages = await _policies.CreateCircuitBreakerPolicy<IEnumerable<WhatsAppMessage>>()
             .ExecuteAsync(async () =>
                 await retryPolicyForMessages.ExecuteAsync(async () =>
                     await _client.GetMessages(conversationId)));
 
         return messages.Select(m => new Message
         {
-            Id = m.Id,
+            Id = Guid.Parse(m.Id),
             Content = m.Content,
-            SenderId = m.From,
-            ReceiverId = m.To,
-            Timestamp = m.Timestamp,
+            From = m.From,
+            To = m.To,
+            CreatedAt = m.Timestamp,
             Platform = MessagePlatform.WhatsApp
         });
     }

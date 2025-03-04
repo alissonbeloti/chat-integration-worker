@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
+using Core.Domain.Repositories;
+using Core.Domain.Entities;
 
 namespace Core.Application.Handlers
 {
@@ -23,7 +23,7 @@ namespace Core.Application.Handlers
             try
             {
                 // Lógica de processamento da mensagem
-                _logger.LogInformation($"Nova mensagem recebida de {message.SenderId} via {message.Platform}");
+                _logger.LogInformation($"Nova mensagem recebida de {message.Id} via {message.Platform}");
 
                 // Salva a mensagem
                 await _messageRepository.SaveMessageAsync(message);
@@ -37,5 +37,7 @@ namespace Core.Application.Handlers
                 throw;
             }
         }
+
+        
     }
 } 

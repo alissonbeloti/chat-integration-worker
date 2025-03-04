@@ -1,17 +1,24 @@
 using Xunit;
 using Moq;
 using Core.Domain.Entities;
-using Core.Infrastructure.Chat;
+using Infrastructure.Integration.Interfaces;
+using Infrastructure.Chat;
+using Microsoft.Extensions.Logging;
+using Core.Domain.Enum;
 
 public class WhatsAppChatTests
 {
     private readonly Mock<IWhatsAppClient> _clientMock;
+    private readonly Mock<ILogger<WhatsAppChat>> _logger;
+    private readonly Mock<RetryPolicies> _policies;
     private readonly WhatsAppChat _chat;
 
     public WhatsAppChatTests()
     {
         _clientMock = new Mock<IWhatsAppClient>();
-        _chat = new WhatsAppChat(_clientMock.Object);
+        _logger = new Mock<ILogger<WhatsAppChat>>();
+        _policies = new Mock<RetryPolicies>();
+        _chat = new WhatsAppChat(_clientMock.Object, _logger.Object, _policies.Object);
     }
 
     [Fact]
@@ -84,7 +91,7 @@ public class WhatsAppChatTests
         // Assert
         var messageList = messages.ToList();
         Assert.Single(messageList);
-        Assert.Equal(whatsAppMessages[0].Id, messageList[0].Id);
+        Assert.Equal(whatsAppMessages[0].Id, messageList[0].Id.ToString());
         Assert.Equal(whatsAppMessages[0].Content, messageList[0].Content);
         Assert.Equal(MessagePlatform.WhatsApp, messageList[0].Platform);
     }
